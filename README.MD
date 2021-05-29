@@ -39,7 +39,7 @@ A bash script that automatically finds vulnerable paramters on the basis of thei
 <a href="https://github.com/ffuf/ffuf">ffuf</a>
 </p>
 
-#### Installation
+### Installation
 **Requirements: python3 and go-lang**
 ```css
 runscan:~ sudo apt-get update
@@ -62,7 +62,7 @@ header="" # please add custom header before using pinaak
 intServer="" # please add interactsh server before using pinaak (http://test.interact.sh/)
 ```
 
-#### Usage
+### Usage
 
 *Please use VPS because it makes a lot of traffic*
 
