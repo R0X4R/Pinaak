@@ -20,7 +20,9 @@ A vulnerability fuzzer tool written in bash, it contains most commonly used tool
 A bash script that automatically finds vulnerable paramters on the basis of their patterns and run some most common used tools to find various vulnerabilities and it also uses nuclei which helps to find vulnerabilities on the basis of templates. Overall it helps you to find low hanging bugs.
 
 <p align="center">
-<a href="https://asciinema.org/a/wrbONQQbFkH6q2oGF5M6HWzcY?speed=8" target="_blank"><img src="https://asciinema.org/a/wrbONQQbFkH6q2oGF5M6HWzcY.svg"/></a>
+<a href="https://asciinema.org/a/wrbONQQbFkH6q2oGF5M6HWzcY?speed=8" target="_blank"><img src="https://asciinema.org/a/wrbONQQbFkH6q2oGF5M6HWzcY.svg"/></a><br>
+</p>
+<p align="center">
 <a href="https://github.com/sqlmapproject/sqlmap">sqlmap</a> •
 <a href="https://github.com/1ndianl33t/Gf-Patterns">gf patterns</a> •
 <a href="https://github.com/defparam/smuggler">smuggler</a> •
