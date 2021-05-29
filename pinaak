@@ -25,7 +25,7 @@ coded by ${YELLOW}@R0X4R${RED} in INDIA${NORMAL}
 usage() {
     loadColors
     echo -e " "
-    echo -e "${RED}     █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
+    echo -e "${RED}   █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
     echo -e "   █▀▀ █ █░▀█ █▀█ █▀█ █░█"
     echo -e "   coded by ${YELLOW}@R0X4R${RED} in INDIA${NORMAL} \n"
     echo -e "   -l  List of targets (must have webprobed earlier <subfinder -d target.com | httpx -silent | anew targets.txt>)"

@@ -41,7 +41,7 @@ A bash script that automatically finds vulnerable paramters on the basis of thei
 
 ### Installation
 **Requirements: python3 and go-lang**
-```css
+```js
 runscan:~ sudo apt-get update
 runscan:~ sudo apt-get install python3.8 python3-pip
 runscan:~ sudo apt-get install golang-go
@@ -57,7 +57,7 @@ If you get any error just copy the error and search on google this will make you
 
 **Important** (add these before using the tool you can do it by: ``sudo nano /usr/bin/pinaak``)
 
-```bash
+```css
 header="" # please add custom header before using pinaak
 intServer="" # please add interactsh server before using pinaak (http://test.interact.sh/)
 ```
@@ -66,7 +66,7 @@ intServer="" # please add interactsh server before using pinaak (http://test.int
 
 *Please use VPS because it makes a lot of traffic*
 
-```css
+```js
 runscan:~ pinaak -h
 
 █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀
@@ -79,7 +79,7 @@ coded by @R0X4R in INDIA
 
 pinaak -l <target files> -t <threads> -b <blind xss server>
 ```
-```css
+```js
 runscan:~ subfinder -d target.com -all -threads 200 -silent | httpx -silent -threads 300 | anew -q targets.txt
 runscan:~ pinaak -l ~/targets.txt -t 200 -b https://test.xss.ht
 ```
