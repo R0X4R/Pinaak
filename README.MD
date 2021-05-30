@@ -3,13 +3,14 @@
   <a href="https://github.com/R0X4R/Pinaak/"><img src="images/logo.png" width="500px" alt="Pinaak"></a>
 </h1>
 <h4 align="center">
-A vulnerability fuzzer tool written in bash, it contains most commonly used tools to perform vulnerability scan.
+A vulnerability fuzzing tool written in bash, it contains most commonly used tools to perform vulnerability scans.
 </h4>
 
 <p align="center">
 <a href="#"><img src="https://madewithlove.org.in/badge.svg"></a>
 <a href="https://github.com/R0X4R/Pinaak/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat"></a>
 <a href="https://github.com/R0X4R/Pinaak/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+<a href="https://ko-fi.com/i/II3I44SJV0"><img src="https://img.shields.io/badge/buy%20me%20a%20ko--fi%20-donate-red"></a>
 <a href="#"><img src="https://img.shields.io/badge/Made%20with-Bash-1f425f.svg"></a>
 <a href="https://twitter.com/R0X4R/"><img src="https://img.shields.io/badge/twitter-%40R0X4R-blue.svg"></a>
 <a href="https://github.com/R0X4R?tab=followers"><img src="https://img.shields.io/badge/github-%40R0X4R-orange"></a>
@@ -84,7 +85,9 @@ runscan:~ subfinder -d target.com -all -threads 200 -silent | httpx -silent -thr
 runscan:~ pinaak -l ~/targets.txt -t 200 -b https://test.xss.ht
 ```
 
-#### Thanks to the authors of the tools used in this script.
+<br>**Donate:** <a href="https://ko-fi.com/i/II3I44SJV0">If you like this script, Buy Me a Coffee</a>
+
+### Thanks to the authors of the tools used in this script.
 
 [@tomnomnom](https://github.com/tomnomnom) [@hahwul](https://github.com/hahwul) [@projectdiscovery](https://github.com/projectdiscovery) [@devanshbatham](https://github.com/devanshbatham)  [@defparam](https://github.com/defparam/) [@bp0lr](https://github.com/bp0lr/) [@ameenmaali](https://github.com/ameenmaali) [@dwisiswant0](https://github.com/dwisiswant0)  [@1ndianl33t](https://github.com/1ndianl33t) [@Emoe](https://github.com/Emoe/) [@sqlmapproject](https://github.com/sqlmapproject/sqlmap)
 
