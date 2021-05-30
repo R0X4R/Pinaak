@@ -3,9 +3,9 @@ targetList=
 threads=
 bServer=
 header="" # please add custom header before using pinaak
-sPayload="~/ssti-payloads.txt"
+sPayload=~/ssti-payloads.txt
 intServer="" # please add interactsh server before using pinaak (http://test.interact.sh/)
-lPayload="~/lfi-payloads.txt"
+lPayload=~/lfi-payloads.txt
 
 loadColors() {
     RED="\e[31m"
