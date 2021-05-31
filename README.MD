@@ -50,7 +50,7 @@ runscan:~ sudo apt-get install golang-go
 
 **Make sure you're root before performing the installation**
 
-```css
+```bash
 runscan:~ git clone https://github.com/R0X4R/Pinaak.git && cd Pinaak/ && chmod +x pinaak install.sh && mv pinaak /usr/bin/ && ./install.sh
 ```
 
@@ -58,7 +58,7 @@ If you get any error just copy the error and search on google this will make you
 
 **Important** (add these before using the tool you can do it by: ``sudo nano /usr/bin/pinaak``)
 
-```css
+```js
 header="" # please add custom header before using pinaak
 intServer="" # please add interactsh server before using pinaak (http://test.interact.sh/)
 ```
@@ -85,7 +85,10 @@ runscan:~ subfinder -d target.com -all -threads 200 -silent | httpx -silent -thr
 runscan:~ pinaak -l ~/targets.txt -t 200 -b https://test.xss.ht
 ```
 
-<br>**Donate:** <a href="https://ko-fi.com/i/II3I44SJV0">If you like this script, Buy Me a Coffee</a>
+<p align="left">
+<h3>Donate</h3> 
+<a href="https://ko-fi.com/Q5Q54SJQR"><img src="https://ko-fi.com/img/githubbutton_sm.svg"></a>
+</p>
 
 ### Thanks to the authors of the tools used in this script.
 
