@@ -99,16 +99,16 @@ filterParams() {
     sleep 3s
     echo -e "Filtering all the parameters"
     mkdir parameters/patterns/
-    cat parameters.txt | gf xss | qsreplace "FUZZ" | anew -q parameters/patterns/xssPatterns.txt
-    cat parameters.txt | gf lfi | anew -q parameters/patterns/lfiPatterns.txt
-    cat parameters.txt | gf ssrf | anew -q parameters/patterns/ssrfPatterns.txt
-    cat parameters.txt | gf ssti | anew -q parameters/patterns/sstiPatterns.txt
-    cat parameters.txt | gf sqli | anew -q parameters/patterns/sqliPatterns.txt
-    cat parameters.txt | gf redirect | anew -q parameters/patterns/redirectPatterns.txt
+    cat parameters/parameters.txt | gf xss | qsreplace "FUZZ" | anew -q parameters/patterns/xssPatterns.txt
+    cat parameters/parameters.txt | gf lfi | anew -q parameters/patterns/lfiPatterns.txt
+    cat parameters/parameters.txt | gf ssrf | anew -q parameters/patterns/ssrfPatterns.txt
+    cat parameters/parameters.txt | gf ssti | anew -q parameters/patterns/sstiPatterns.txt
+    cat parameters/parameters.txt | gf sqli | anew -q parameters/patterns/sqliPatterns.txt
+    cat parameters/parameters.txt | gf redirect | anew -q parameters/patterns/redirectPatterns.txt
     cat $sPayload | while read -r line; do cat parameters/patterns/sstiPatterns.txt | qsreplace "$line" | anew -q checkSSTI.txt;done 2> /dev/null
     cat $lPayload | while read -r line; do cat parameters/patterns/lfiPatterns.txt | qsreplace "$line" | anew -q checkLFI.txt;done 2> /dev/null
     cat parameters/patterns/ssrfPatterns.txt | qsreplace "$intServer" | anew -q checkSSRF.txt
-    cat parameters.txt | cut -d"?" -f1 | cut -d"=" -f1 | anew -q checkSensitive.txt
+    cat parameters/parameters.txt | cut -d"?" -f1 | cut -d"=" -f1 | anew -q checkSensitive.txt
     cat parameters/patterns/redirectPatterns.txt | qsreplace "FUZZ" | anew -q checkRedirect.txt
     cat parameters/patterns/sqliPatterns.txt | qsreplace "FUZZ" | anew -q checkSQLI.txt
 }
