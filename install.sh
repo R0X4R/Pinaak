@@ -42,8 +42,11 @@ git clone https://github.com/1ndianl33t/Gf-Patterns
 mv ~/Gf-Patterns/*.json ~/.gf
 sudo cp ~/go/bin/* /usr/bin/
 nuclei -update-templates
-wget https://raw.githubusercontent.com/R0X4R/Garud/master/slack-bot/ssti-payloads.txt ~/ssti-payloads.txt
-wget https://gist.githubusercontent.com/detonxx/a885ce7dd64a7139cb6f5b6860499ba8/raw ~/lfi-payloads.txt
+mkdir -p ~/tools/payloads/
+cd ~/tools/payloads/
+wget https://raw.githubusercontent.com/R0X4R/Garud/master/payloads/lfi.txt
+wget https://raw.githubusercontent.com/R0X4R/Garud/master/payloads/ssti.txt
+cd
 sleep 2s
 clear
 echo -e "Please add your slack webhook in ~/.config/notify/notify.conf file"
