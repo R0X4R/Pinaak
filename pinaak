@@ -3,9 +3,9 @@ targetList=
 threads=
 bServer=
 header="" # please add custom header before using pinaak
-sPayload=~/ssti-payloads.txt
+sPayload=~/tools/payloads/ssti.txt
 intServer="" # please add interactsh server before using pinaak (http://test.interact.sh/)
-lPayload=~/lfi-payloads.txt
+lPayload=~/tools/payloads/lfi.txt
 
 loadColors() {
     RED="\e[31m"
@@ -75,7 +75,7 @@ if [ -z "$threads" ]
 fi
 
 if [ ! -d "pinaak_output" ]; then
-    mkdir pinaak_output/
+    mkdir -p pinaak_output/
 fi
 
 cd pinaak_output/
@@ -89,7 +89,7 @@ information() {
 getParams() {
     sleep 3s
     echo -e "\nGetting all the parameters"
-    mkdir parameters/
+    mkdir -p parameters/
     cat $targetList | gauplus --random-agent -retries 20 -t $threads -subs -b png,jpg,gif,svg | anew -q parameters/gau_output.txt
     cat $targetList | xargs -P 50 -I % bash -c "echo % | waybackurls" | anew -q parameters/way_output.txt
     cat parameters/*.txt | urldedupe -s | anew -q parameters/parameters.txt
@@ -98,7 +98,7 @@ getParams() {
 filterParams() {
     sleep 3s
     echo -e "Filtering all the parameters"
-    mkdir parameters/patterns/
+    mkdir -p parameters/patterns/
     cat parameters/parameters.txt | gf xss | qsreplace "FUZZ" | anew -q parameters/patterns/xssPatterns.txt
     cat parameters/parameters.txt | gf lfi | anew -q parameters/patterns/lfiPatterns.txt
     cat parameters/parameters.txt | gf ssrf | anew -q parameters/patterns/ssrfPatterns.txt
