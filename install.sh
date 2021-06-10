@@ -10,6 +10,8 @@ sudo apt-get install python3
 sudo apt-get install python3-pip
 sudo apt-get install golang-go
 sudo apt install cmake
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb --no-check-certificate
+sudo apt install ./google-chrome-stable_current_amd64.deb
 sleep 2s
 clear
 echo "Installing python tools"
