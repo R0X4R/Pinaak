@@ -28,6 +28,7 @@ go get github.com/tomnomnom/waybackurls
 go get -u github.com/ffuf/ffuf
 go get github.com/Emoe/kxss
 go get -u github.com/tomnomnom/qsreplace
+go get github.com/detectify/page-fetch
 cd ~/tools/ && git clone https://github.com/projectdiscovery/notify.git; cd notify/cmd/notify; go build; mv notify /usr/bin/
 cd ~/tools/ && git clone https://github.com/hahwul/dalfox && cd dalfox && go install
 cd ~/tools/ && git clone https://github.com/dwisiswant0/crlfuzz && cd crlfuzz/cmd/crlfuzz && go build . && sudo mv crlfuzz /usr/bin/
