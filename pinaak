@@ -25,14 +25,14 @@ coded by ${YELLOW}@R0X4R${RED} in INDIA${NORMAL}
 usage() {
     loadColors
     echo -e " "
-    echo -e "${RED}   █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
-    echo -e "   █▀▀ █ █░▀█ █▀█ █▀█ █░█"
-    echo -e "   coded by ${YELLOW}@R0X4R${RED} in INDIA${NORMAL} \n"
+    echo -e "${RED}█▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
+    echo -e "█▀▀ █ █░▀█ █▀█ █▀█ █░█"
+    echo -e "coded by ${YELLOW}@R0X4R${RED} in INDIA${NORMAL} \n"
     echo -e "Usage: ./pinaak [options] [targetlist]"
     echo -e "   -l  List of targets [must have webprobed earlier] (subfinder -d target.com | httpx -silent | anew targets.txt)"
     echo -e "   -b  Add your xss server for Blind XSS finding [-b https://test.xss.ht] (you can get it from https://xsshunter.com/)"
-    echo -e "   -t  Number of threads [-t int]  (default 100) "
-    echo -e "Example: ./pinaak -l [targetlist] -t [threads] -b [blind xss server] \n"
+    echo -e "   -t  Number of threads [-t int] (default 100) \n"
+    echo -e "Example: ./pinaak -l [targetlist] -t [threads] -b [blind xss server]"
     exit 1
 }
 
@@ -60,13 +60,13 @@ if [ -z "$targetList" ]
   then
     loadColors
     echo -e " "
-    echo -e "${RED}   █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
-    echo -e "   █▀▀ █ █░▀█ █▀█ █▀█ █░█"
-    echo -e "   ${NORMAL}coded by ${YELLOW}@R0X4R${NORMAL} in INDIA"
+    echo -e "${RED}█▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀"
+    echo -e "█▀▀ █ █░▀█ █▀█ █▀█ █░█"
+    echo -e "${NORMAL}coded by ${YELLOW}@R0X4R${NORMAL} in INDIA"
     echo -e " "
     echo -e "${RED}[ERROR] - targetlist not supplied${NORMAL}"
-    echo -e "use following command to obtain targetlist: (subfinder -d target.com | httpx -silent | anew targets.txt)"
-    echo -e "./pinaak -l [targetlist] -t [threads] -b [xss server] \n"
+    echo -e "To obtain targetlist: (subfinder -d target.com | httpx -silent | anew targets.txt)"
+    echo -e "Usage: ./pinaak -l [targetlist] -t [threads] -b [xss server]"
     exit 1
 fi
 
