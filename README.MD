@@ -68,17 +68,18 @@ intServer="" # please add interactsh server before using pinaak (http://test.int
 *Please use VPS because it makes a lot of traffic*
 
 ```js
-runscan:~ pinaak -h
+runscan:~ ./pinaak -h
 
 █▀█ █ █▄░█ ▄▀█ ▄▀█ █▄▀
 █▀▀ █ █░▀█ █▀█ █▀█ █░█
 coded by @R0X4R in INDIA
 
--l  List of targets (must have webprobed earlier <subfinder -d target.com | httpx -silent | anew targets.txt>)
--b  Add your xss server for Blind XSS finding <https://test.xss.ht> (you can get it from https://xsshunter.com/)
--t  Number of threads (default 100) <-t int>
+Usage: ./pinaak [options] [targetlist]
+   -l  List of targets [must have webprobed earlier] (subfinder -d target.com | httpx -silent | anew targets.txt)
+   -b  Add your xss server for Blind XSS finding [-b https://test.xss.ht] (you can get it from https://xsshunter.com/)
+   -t  Number of threads [-t int] (default 100)
 
-pinaak -l <target files> -t <threads> -b <blind xss server>
+Example: ./pinaak -l [targetlist] -t [threads] -b [blind xss server]
 ```
 ```js
 runscan:~ subfinder -d target.com -all -threads 200 -silent | httpx -silent -threads 300 | anew -q targets.txt
